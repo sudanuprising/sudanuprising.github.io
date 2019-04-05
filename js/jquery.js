@@ -1,11 +1,12 @@
 $(document).ready(function () {
-    var socket = io.connect('https://stormy-castle-92694.herokuapp.com/'); // Change to the host and node port
+    var socket = io.connect('https://stormy-castle-92694.herokuapp.com/');
     window.paused = false;
     window.tweets = 0;
+
     socket.on("stream", function (tweet) {
-        if (window.paused === false) {
+        if (window.paused === false && $('[tweet-id="' + tweet.id + '"]').length === 0) {
             window.tweets += 1;
-            $(".content").prepend('<li class="tweet" tweet-index="' + window.tweets + '"><img src="' + tweet.icon + '" alt=""><div class="name">' + tweet.name + ' (@' + tweet.username + ')</div><div class="message">' + tweet.text + '</div></li>').delay(5000000);
+            $(".content").prepend('<li class="tweet" tweet-id="' + tweet.id + '"><img src="' + tweet.icon + '" alt=""><div class="name">' + tweet.name + ' (@' + tweet.username + ')</div><div class="message">' + tweet.text + '</div></li>');
             $('.list ').text(tweet.users + ' User Currently, ' + window.tweets + ' Tweet ');
             $('.tweet').mouseenter(function () {
                 window.paused = true;
@@ -16,7 +17,7 @@ $(document).ready(function () {
                 window.paused = false;
                 $('.change-hash-tag').text('Pause')
             });
-            $('[tweet-index="'+window.tweets+'"]').css('background',tweet.color);
+            $('[tweet-id="' + tweet.id + '"]').css('background', tweet.color);
         }
     });
 
