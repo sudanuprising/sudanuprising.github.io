@@ -1,15 +1,23 @@
 $(document).ready(function () {
     var socket = io.connect('https://stormy-castle-92694.herokuapp.com/'); // Change to the host and node port
-
-    $(".popup").hide();
-
+    window.paused = false;
+    window.tweets = 0;
     socket.on("stream", function (tweet) {
-        $(".content").prepend('<li><img src="' + tweet.icon + '" alt=""><div class="name">' + tweet.name + ' (@' + tweet.username + ')</div><div class="message">' + tweet.text + '</div></li>');
-        $(".list").html(tweet.hash);
+        if (window.paused === false) {
+            window.tweets += 1;
+            $(".content").prepend('<li class="tweet" tweet-index="' + window.tweets + '"><img src="' + tweet.icon + '" alt=""><div class="name">' + tweet.name + ' (@' + tweet.username + ')</div><div class="message">' + tweet.text + '</div></li>').delay(5000000);
+            $('.list ').text(tweet.users + ' User Currently, ' + window.tweets + ' Tweet ');
+            $('.tweet').mouseenter(function () {
+                window.paused = true;
+                $('.change-hash-tag').text('Resume')
 
-        var colors = [".3F602B", "#77896C", "#008B8B", "#528B8B", "#567E3A", "#55AE3A", "#458B74", "#174038", "#20BF9F", "#01C5BB", "#457371", "#78AB46", "#FF4040", "#EE5C42", "#CD3700", "#29242", "#B87333", "#8B795E"];
-        var rand = Math.floor(Math.random() * colors.length);
-        $("li:first-child").css("background-color", colors[rand]);
+            });
+            $('.tweet').mouseleave(function () {
+                window.paused = false;
+                $('.change-hash-tag').text('Pause')
+            });
+            $('[tweet-index="'+window.tweets+'"]').css('background',tweet.color);
+        }
     });
 
 
@@ -18,8 +26,7 @@ $(document).ready(function () {
     });
 
     $(".change-hash-tag").click(function () {
-        $(".popup").fadeToggle();
-        $(".hash-tag").focus();
+        window.paused = (!window.paused);
     });
 
 
@@ -32,5 +39,7 @@ $(document).ready(function () {
     $(".about").hover(function () {
         $(".about div").stop().fadeToggle();
     });
+
+
     socket.emit("hash", {hash: ''});
 });
