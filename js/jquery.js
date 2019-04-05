@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var socket = io.connect('http://sudanuprising.eu-4.evennode.com/'); // Change to the host and node port
+    var socket = io.connect('https://stormy-castle-92694.herokuapp.com/'); // Change to the host and node port
 
     $(".popup").hide();
 
